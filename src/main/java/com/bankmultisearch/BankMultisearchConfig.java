@@ -20,7 +20,7 @@ public interface BankMultisearchConfig extends Config
 	@ConfigItem(
 		keyName = "slotSearchEnabled",
 		name = "Slot search",
-		description = "Including a slot name in the search to only show items that fit in that slot. You can include multiple slots. Remember that new items may not show up because they have not been picked up by the runelite wiki scraper.",
+		description = "Including a slot name in the search to only show items that fit in that slot. You can include multiple slots. Remember that new items may not show up because they have not been marked with a slot by the runelite wiki scraper.",
 		position = 20
 	)
 	default boolean slotSearchEnabled() {

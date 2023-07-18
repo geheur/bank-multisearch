@@ -1,102 +1,38 @@
 package com.bankmultisearch;
 
-import com.google.gson.Gson;
 import com.google.inject.Provides;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.EquipmentInventorySlot;
-import net.runelite.api.events.*;
-import net.runelite.client.callback.ClientThread;
+import net.runelite.api.events.CommandExecuted;
+import net.runelite.api.events.ScriptCallbackEvent;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.eventbus.EventBus.Subscriber;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
-import net.runelite.client.input.KeyManager;
-import net.runelite.client.input.MouseManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.http.api.item.ItemStats;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Bank search utilities",
-	tags = {"slot"}
+	name = "Bank slot/multisearch",
+	tags = {"search", "utility", "utilties"}
 )
 public class BankMultisearchPlugin extends Plugin
 {
 	@Inject private Client client;
 	@Inject private BankMultisearchConfig config;
 	@Inject private ItemManager itemManager;
-	@Inject private ClientThread clientThread;
-	@Inject private KeyManager keyManager;
-	@Inject private OverlayManager overlayManager;
-	@Inject private MouseManager mouseManager;
-	@Inject private ConfigManager configManager;
-	@Inject private Gson gson;
-	@Inject private EventBus eventBus;
-
-	@Override
-	protected void startUp()
-	{
-		updateSubscribers();
-	}
-
-	@Override
-	protected void shutDown()
-	{
-		removeSubscribers();
-	}
 
 	@Provides
 	BankMultisearchConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(BankMultisearchConfig.class);
-	}
-
-	private final List<Subscriber> subscribers = new ArrayList<>();
-
-	@Subscribe
-	public void onGameTick(GameTick e) {
-		updateSubscribers();
-	}
-
-	private void updateSubscribers() {
-		removeSubscribers();
-
-		register(GameTick.class, e -> {
-//			System.out.println("in subscriber");
-		});
-	}
-
-	private <T> void register(Class<T> event, Consumer<T> eventHandler) {
-		register(event, eventHandler, 1f);
-	}
-
-	private <T> void register(Class<T> event, Consumer<T> eventHandler, float priority) {
-		Subscriber subscriber = eventBus.register(event, eventHandler, priority);
-		subscribers.add(subscriber);
-	}
-
-	private void removeSubscribers() {
-		for (Subscriber subscriber : subscribers)
-		{
-			eventBus.unregister(subscriber);
-		}
-		subscribers.clear();
-	}
-
-	private final Map<String, Object> vars = new HashMap<>();
-
-	@Subscribe
-	public void onCommandExecuted(CommandExecuted e) {
-		if ("update".equals(e.getCommand())) {
-
-		}
 	}
 
 	@Subscribe(priority = -1)
@@ -174,7 +110,6 @@ public class BankMultisearchPlugin extends Plugin
 				if (s.endsWith("slot"))
 				{
 					s = s.substring(0, s.length() - "slot".length());
-					System.out.println(s);
 				}
 				boolean found = true;
 				switch (s)
@@ -261,6 +196,10 @@ public class BankMultisearchPlugin extends Plugin
 		) {
 			split = null;
 		}
-		System.out.println("slots bitfield " + slotsBitfield + " split " + split);
+	}
+
+	@Subscribe
+	public void onCommandExecuted(CommandExecuted e) {
+
 	}
 }
