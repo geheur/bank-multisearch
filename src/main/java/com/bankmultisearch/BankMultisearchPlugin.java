@@ -9,10 +9,10 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.EquipmentInventorySlot;
-import net.runelite.api.events.CommandExecuted;
 import net.runelite.api.events.ScriptCallbackEvent;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ProfileChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -28,12 +28,7 @@ public class BankMultisearchPlugin extends Plugin
 	@Inject private Client client;
 	@Inject private BankMultisearchConfig config;
 	@Inject private ItemManager itemManager;
-
-	@Provides
-	BankMultisearchConfig provideConfig(ConfigManager configManager)
-	{
-		return configManager.getConfig(BankMultisearchConfig.class);
-	}
+	@Inject private ConfigManager configManager;
 
 	@Subscribe(priority = -1)
 	public void onScriptCallbackEvent(ScriptCallbackEvent e) {
@@ -198,8 +193,23 @@ public class BankMultisearchPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
-	public void onCommandExecuted(CommandExecuted e) {
+	@Override
+	public void startUp() {
+		migrate();
+	}
 
+	@Subscribe
+	public void onProfileChanged(ProfileChanged e) {
+		migrate();
+	}
+
+	public void migrate() {
+		configManager.setConfiguration("bankmultisearch", "serialVersion", 0);
+	}
+
+	@Provides
+	BankMultisearchConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(BankMultisearchConfig.class);
 	}
 }
