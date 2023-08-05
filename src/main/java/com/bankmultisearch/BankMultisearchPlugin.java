@@ -40,6 +40,7 @@ public class BankMultisearchPlugin extends Plugin
 		int stringStackSize = client.getStringStackSize();
 
 		String search = stringStack[stringStackSize - 1];
+		if (search.isEmpty()) return;
 		updateSearch(search);
 
 		int itemId = intStack[intStackSize - 1];
