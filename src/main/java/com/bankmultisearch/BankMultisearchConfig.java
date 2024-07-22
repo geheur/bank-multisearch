@@ -36,4 +36,14 @@ public interface BankMultisearchConfig extends Config
 	default void label1() {
 
 	}
+
+	@ConfigItem(
+		keyName = "slotSearchRequireSlot",
+		name = "Require \"slot\"",
+		description = "e.g. you must type \"ringslot\" or \"slot:ring\" instead of \"ring\" to search for rings.",
+		position = 40
+	)
+	default boolean slotSearchRequireSlot() {
+		return false;
+	}
 }

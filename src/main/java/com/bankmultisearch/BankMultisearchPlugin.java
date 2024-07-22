@@ -62,7 +62,6 @@ public class BankMultisearchPlugin extends Plugin
 
 		if (split != null)
 		{
-			intStack[intStackSize - 2] = 0;
 			String itemName = itemManager.getItemComposition(itemId).getName().toLowerCase();
 			for (String s : split)
 			{
@@ -70,9 +69,10 @@ public class BankMultisearchPlugin extends Plugin
 				{
 					// return true
 					intStack[intStackSize - 2] = 1;
-					break;
+					return;
 				}
 			}
+			if (slotsBitfield != 0) intStack[intStackSize - 2] = 0; // remove anything we added from slot search that doesn't match.
 		}
 	}
 
@@ -103,9 +103,12 @@ public class BankMultisearchPlugin extends Plugin
 			for (int i = 0; i < split.size(); i++)
 			{
 				String s = split.get(i);
-				if (s.endsWith("slot"))
-				{
+				if (s.startsWith("slot:")) {
+					s = s.substring("slot:".length());
+				} else if (s.endsWith("slot")) {
 					s = s.substring(0, s.length() - "slot".length());
+				} else {
+					if (config.slotSearchRequireSlot()) continue;
 				}
 				boolean found = true;
 				switch (s)
