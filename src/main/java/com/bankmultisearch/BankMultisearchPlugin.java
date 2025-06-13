@@ -14,9 +14,9 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ProfileChanged;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.ItemStats;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.http.api.item.ItemStats;
 
 @Slf4j
 @PluginDescriptor(
@@ -35,17 +35,17 @@ public class BankMultisearchPlugin extends Plugin
 		if (!"bankSearchFilter".equals(e.getEventName())) return;
 
 		int[] intStack = client.getIntStack();
-		String[] stringStack = client.getStringStack();
+		Object[] objectStack = client.getObjectStack();
 		int intStackSize = client.getIntStackSize();
-		int stringStackSize = client.getStringStackSize();
+		int objectStackSize = client.getObjectStackSize();
 
-		String search = stringStack[stringStackSize - 1];
+		String search = (String) objectStack[objectStackSize - 1];
 		if (search.isEmpty()) return;
 		updateSearch(search);
 
 		int itemId = intStack[intStackSize - 1];
 		if (slotsBitfield != 0) { // any slot filters exist.
-			ItemStats itemStats = itemManager.getItemStats(itemId, false);
+			ItemStats itemStats = itemManager.getItemStats(itemId);
 			boolean wrongSlot =
 				itemStats == null ||
 				!itemStats.isEquipable() ||
